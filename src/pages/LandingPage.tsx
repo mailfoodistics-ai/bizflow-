@@ -8,7 +8,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
       {/* Mobile Safe Area Header */}
-      <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-700/50 safe-area-inset-top">
+      <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-700/50" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
