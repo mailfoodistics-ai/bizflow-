@@ -1,6 +1,7 @@
 {
   "version": "1.0.0",
-  "releaseNotes": "• Initial release\n• POS system with Supabase backend\n• Real-time inventory management\n• Invoice generation with UPI QR codes",
+  "releaseNotes": "• Initial release\n• POS system with Supabase backend\n• Real-time inventory management\n• Invoice generation with UPI QR codes\n• Auto-update system",
   "forceUpdate": false,
-  "releaseDate": "2026-03-17"
+  "releaseDate": "2026-03-17",
+  "downloadUrl": "https://play.google.com/store/apps/details?id=com.bizflow.pos"
 }

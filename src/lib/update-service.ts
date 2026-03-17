@@ -1,6 +1,7 @@
 /**
  * Update Service - Handles app version checking and updates
  * Compares current version with server version and prompts for update
+ * Supports both web and mobile (Capacitor) platforms
  */
 
 export interface AppVersion {
@@ -10,6 +11,15 @@ export interface AppVersion {
   forceUpdate: boolean; // If true, user cannot ignore update
   releaseDate: string;
 }
+
+// Check if running in Capacitor
+const isCapacitor = () => {
+  try {
+    return !!(window as any).Capacitor;
+  } catch {
+    return false;
+  }
+};
 
 class UpdateService {
   private versionCheckUrl = `${import.meta.env.VITE_API_URL || ""}/api/app-version`;
@@ -135,32 +145,86 @@ class UpdateService {
 
   /**
    * Perform the update by clearing cache and reloading
+   * For mobile: navigates to download URL or app store
+   * For web: clears cache and reloads
    */
   async performUpdate(): Promise<void> {
     try {
-      // Clear service worker cache if available
-      if ("serviceWorker" in navigator) {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        for (const registration of registrations) {
-          await registration.unregister();
-        }
+      if (isCapacitor()) {
+        // Mobile app: open app store or download URL
+        await this.mobileUpdate();
+      } else {
+        // Web app: clear cache and reload
+        await this.webUpdate();
+      }
+    } catch (error) {
+      console.error("Error during update:", error);
+      // Fallback: just reload
+      window.location.reload();
+    }
+  }
+
+  /**
+   * Update for web app
+   */
+  private async webUpdate(): Promise<void> {
+    // Clear service worker cache if available
+    if ("serviceWorker" in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const registration of registrations) {
+        await registration.unregister();
+      }
+    }
+
+    // Clear browser caches
+    if ("caches" in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((name) => caches.delete(name)));
+    }
+
+    // Force page reload with cache busting
+    window.location.href = window.location.href + "?_v=" + Date.now();
+  }
+
+  /**
+   * Update for mobile app (Capacitor)
+   */
+  private async mobileUpdate(): Promise<void> {
+    try {
+      const latestVersion = await this.getLatestVersion();
+      if (!latestVersion) {
+        throw new Error("Could not fetch latest version");
       }
 
-      // Clear browser caches
+      // For mobile, we can trigger an app reload or navigate to app store
+      // The actual APK/IPA distribution would be handled through app stores
+      
+      // Option 1: If downloadUrl is provided, open it (goes to app store)
+      if (latestVersion.downloadUrl) {
+        const { Browser } = await import("@capacitor/browser");
+        await Browser.open({ url: latestVersion.downloadUrl });
+        return;
+      }
+
+      // Option 2: Just reload the app (for development/testing)
+      // Clear cache and reload
       if ("caches" in window) {
         const cacheNames = await caches.keys();
         await Promise.all(cacheNames.map((name) => caches.delete(name)));
       }
 
-      // Clear localStorage if needed (optional)
-      // localStorage.clear();
-
-      // Force page reload with cache busting
-      window.location.href = window.location.href + "?_v=" + Date.now();
+      // Use Capacitor's reload capability
+      const { App } = await import("@capacitor/app");
+      // Delay reload slightly to allow update message to be shown
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
     } catch (error) {
-      console.error("Error during update:", error);
-      // Fallback: just reload
-      window.location.reload();
+      console.error("Error during mobile update:", error);
+      // Fallback: regular reload
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
     }
   }
 

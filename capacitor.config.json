@@ -15,11 +15,16 @@
   },
   "plugins": {
     "SplashScreen": {
-      "launchShowDuration": 3000,
+      "launchShowDuration": 2000,
       "launchAutoHide": true,
-      "backgroundColor": "#000000",
+      "backgroundColor": "#1e293b",
       "androidSplashResourceName": "splash",
-      "iosSplashResourceName": "Splash"
+      "iosSplashResourceName": "Splash",
+      "splashImmersive": true,
+      "layoutName": "activity_main"
+    },
+    "App": {
+      "packageName": "com.bizflow.pos"
     }
   }
 }
