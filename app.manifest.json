@@ -1,0 +1,67 @@
+{
+  "name": "BizFlow POS",
+  "version": "1.0.0",
+  "description": "Professional Point of Sale System for Retail Stores",
+  "author": "BizFlow Technologies",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bizflow/pos"
+  },
+  "keywords": [
+    "pos",
+    "point-of-sale",
+    "retail",
+    "billing",
+    "inventory",
+    "e-commerce"
+  ],
+  "homepage": "https://bizflow.app",
+  "bugs": {
+    "url": "https://github.com/bizflow/pos/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://bizflow.app/support"
+  },
+  "security": {
+    "codeSigningRequired": true,
+    "enableSandbox": true,
+    "enableMemoryProtection": true,
+    "disableDebugging": true,
+    "secureLogging": true,
+    "dataEncryption": "AES-256"
+  },
+  "manifest": {
+    "permissions": [
+      "android.permission.INTERNET",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "android.permission.CAMERA",
+      "android.permission.WRITE_EXTERNAL_STORAGE",
+      "android.permission.READ_EXTERNAL_STORAGE"
+    ],
+    "usesLibraries": [
+      {
+        "name": "androidx.security",
+        "required": true
+      }
+    ]
+  },
+  "trustedSignatories": [
+    {
+      "name": "BizFlow Development Team",
+      "email": "security@bizflow.app",
+      "keyId": "BIZFLOW-SIGNING-KEY"
+    }
+  ],
+  "privacyPolicy": "https://bizflow.app/privacy",
+  "termsOfService": "https://bizflow.app/terms",
+  "dataProtection": {
+    "gdprCompliant": true,
+    "ccpaCompliant": true,
+    "dataDeletionPolicy": "user-requested or 30-days after account closure",
+    "encryptionInTransit": true,
+    "encryptionAtRest": true,
+    "dataMinimization": true
+  }
+}

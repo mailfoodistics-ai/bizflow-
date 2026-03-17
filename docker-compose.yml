@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # Supabase Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: bizflow_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Supabase (Self-hosted simulation)
+  # For production, use https://supabase.com
+  # For local development, the postgres container above is sufficient
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    driver: bridge
+
+# Start with: docker-compose up -d
+# Stop with: docker-compose down
+# View logs: docker-compose logs -f
+
+# Notes:
+# - This provides PostgreSQL locally
+# - For full Supabase features, use https://supabase.com (free tier)
+# - Update .env.local after Supabase setup
+# - Default credentials: postgres/postgres on localhost:5432

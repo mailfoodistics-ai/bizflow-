@@ -1,0 +1,25 @@
+{
+  "appId": "com.bizflow.pos",
+  "appName": "BizFlow POS",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInsetAdjustmentBehavior": "automatic"
+  },
+  "android": {
+    "buildOptions": {
+      "releaseType": "APK"
+    }
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchAutoHide": true,
+      "backgroundColor": "#000000",
+      "androidSplashResourceName": "splash",
+      "iosSplashResourceName": "Splash"
+    }
+  }
+}
