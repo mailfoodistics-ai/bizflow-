@@ -8,7 +8,11 @@ export async function getProducts(storeId: string): Promise<Product[]> {
     .eq("store_id", storeId)
     .order("created_at", { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    const errorMsg = `Failed to fetch products for store ${storeId}: ${error.message} (${error.code})`;
+    console.error(errorMsg, error);
+    throw new Error(errorMsg);
+  }
   return data || [];
 }
 

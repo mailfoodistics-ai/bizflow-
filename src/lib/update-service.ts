@@ -49,24 +49,7 @@ class UpdateService {
 
       this.lastCheckTime = now;
 
-      // Try fetching from server, fallback to local version file
-      try {
-        const response = await fetch(`${this.versionCheckUrl}?_t=${now}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          return data as AppVersion;
-        }
-      } catch (serverError) {
-        console.log("Server version check failed, trying local manifest");
-      }
-
-      // Fallback: check version.json in public folder
+      // Check version.json in public folder
       const fallbackResponse = await fetch("/version.json?_t=" + now);
       if (fallbackResponse.ok) {
         const data = await fallbackResponse.json();

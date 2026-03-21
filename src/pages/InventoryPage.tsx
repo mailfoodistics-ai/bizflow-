@@ -71,22 +71,42 @@ export default function InventoryPage() {
     const loadData = async () => {
       try {
         setError(null);
-        if (!user) return;
+        if (!user) {
+          setLoading(false);
+          return;
+        }
 
-        const settings = await getStoreSettings(user.id);
-        setStoreSettings(settings);
+        try {
+          const settings = await getStoreSettings(user.id);
+          setStoreSettings(settings);
+        } catch (settingsError) {
+          console.warn("Warning: Failed to load store settings:", settingsError);
+          // Don't fail completely if settings fail
+        }
         
         // Use user.id as store_id
-        const productsData = await getProducts(user.id);
-        setProducts(productsData);
-        setFilteredProducts(productsData);
-        
-        // Extract unique categories from products
-        const cats = [...new Set(productsData.map(p => p.category).filter(Boolean))];
-        setCategories(cats);
+        try {
+          const productsData = await getProducts(user.id);
+          setProducts(productsData);
+          setFilteredProducts(productsData);
+          
+          // Extract unique categories from products
+          const cats = [...new Set(productsData.map(p => p.category).filter(Boolean))];
+          setCategories(cats);
+        } catch (productsError: any) {
+          console.error("Error loading products:", productsError);
+          const errorMessage = productsError?.message || JSON.stringify(productsError);
+          
+          // If it's a 403 error, it's likely an RLS policy issue
+          if (errorMessage.includes("403") || errorMessage.includes("row-level")) {
+            setError("Permission denied: Check Supabase RLS policies. You may need to allow access to your own products.");
+          } else {
+            setError(`Failed to load products: ${errorMessage}`);
+          }
+        }
       } catch (error) {
-        console.error("Error loading products:", error);
-        setError("Failed to load products. Please try again.");
+        console.error("Unexpected error loading data:", error);
+        setError("An unexpected error occurred. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -225,6 +245,27 @@ export default function InventoryPage() {
         onRetry={() => {
           setLoading(true);
           setError(null);
+          // Reload data
+          const loadData = async () => {
+            try {
+              if (!user) {
+                setLoading(false);
+                return;
+              }
+              const productsData = await getProducts(user.id);
+              setProducts(productsData);
+              setFilteredProducts(productsData);
+              const cats = [...new Set(productsData.map(p => p.category).filter(Boolean))];
+              setCategories(cats);
+              setError(null);
+            } catch (error: any) {
+              console.error("Retry failed:", error);
+              setError(`Retry failed: ${error?.message || "Unknown error"}`);
+            } finally {
+              setLoading(false);
+            }
+          };
+          loadData();
         }}
       />
     );
